@@ -11,39 +11,26 @@
 <meta charset="UTF-8">
 <title>와이파이 정보 구하기</title>
 	<style type="text/css">
-	
-		#menu {
-			margin-bottom: 20px;
-			text-align: center;
-		}
-		
-		#menu a {
-			margin-right: 5px;
-		}
-		
-		#table {
+		table {
             border-collapse: collapse;
             width: 100%;
         }
-        #table td, #table th {
-            border: 1px solid gray;
+        td, th {
+            border: 1px solid black;
             padding: 10px;
         }
-        #table tr:nth-child(odd){background-color: #FAFABE;}
-        #table th {
+        tr:nth-child(odd){background-color: #F4F7FC;}
+        th {
             padding-top: 10px;
             padding-bottom: 10px;
-            text-align: left;
-            background-color: #FFF56E;
-            color: #8B6331;
+            text-align: center;
+            background-color: #BFC9FC;
+            color: #3939FB;
         }
 	</style>
 </head>
 <body>
-
-	
     <%
-    	
     	Double lat = 0.0;
     	Double lnt = 0.0;
     
@@ -53,33 +40,27 @@
     	} catch (Exception e) {
             e.printStackTrace();
         }
-    
-    	HistoryService hs = new HistoryService();
-	    History history = new History();
-	    List<WifiInfo> list = null;
-	    String wifiSearch = request.getParameter("wifiSearch");
-	    boolean isSearched = wifiSearch != null ? (wifiSearch.equals("true") ? true : false) : false;
- 
     %>
 
-    <h1 style="text-align: center;">와이파이 정보 구하기</h1>
-    <div id="menu">
-    	<a href="home.jsp">홈</a> 
-     	<a href="history.jsp">위치 히스토리 목록</a> 
+    <h1>와이파이 정보 구하기</h1>
+    <div>
+    	<a href="home.jsp">홈</a> | 
+     	<a href="history.jsp">위치 히스토리 목록</a> |
      	<a href="load-wifi.jsp"> Open API 와이파이 정보 가져오기</a>
+     	<p></p>
     </div>
     
-    <form method="get" action="home.jsp" style="text-align: center;">
-        <label for="lat">위도 :</label>
+    <form method="get" action="home.jsp">
+        <label for="lat">LAT :</label>
 	    <input id="lat" type="text" value=<%= lat %>>
-	    <label for="lnt">경도 :</label>
+	    <label for="lnt">, LNT :</label>
 	    <input id="lnt" type="text" value=<%= lnt %>>
         <button type="button" onclick=getMyLocation()>내 위치 가져오기</button>
-        <button type="button" onclick=nearWifiInfo()>근처 Wifi 정보 가져오기</button>
+        <button type="button" onclick=getNearWifiInfo()>근처 Wifi 정보 가져오기</button>
     </form>
 
     <br/>
-    <table id="table">
+    <table>
         <tr>
             <th>거리(Km)</th>
             <th>관리번호</th>
@@ -100,14 +81,22 @@
             <th>작업일자</th>
         </tr>
             <%
-            	if (isSearched) {
-	                WifiInfoService ws = new WifiInfoService();
-	                list = ws.nearWifiInfo(lat, lnt);
+	            HistoryService hs = new HistoryService();
+	    	    History history = new History();
+	    	    List<WifiInfo> list = null;
+	    	    String wifiClick = request.getParameter("wifiClick");
+	    	    boolean isClicked = wifiClick != null ? (wifiClick.equals("true") ? true : false) : false;
+	    	    
+            	if (isClicked) {
+	              WifiInfoService ws = new WifiInfoService();
+	              list = ws.nearWifiInfo(lat, lnt);
+	              
+	              //if (list != null) {
 	                
 	                for (WifiInfo wifi : list) { 
 	        %>
 	          	      <tr>	
-	                      <td><%=Math.round(wifi.getDistance() * 10000 ) / 10000.0%></td>
+	                      <td><%=wifi.getDistance()%></td>
 	                      <td><%=wifi.getX_SWIFI_MGR_NO()%></td>
 	                      <td><%=wifi.getX_SWIFI_WRDOFC()%></td>
 	                      <td><%=wifi.getX_SWIFI_MAIN_NM()%></td>
@@ -141,30 +130,36 @@
                 }
             %>
     </table>
-<script>
-	function getMyLocation() {
-		if (!navigator.geolocation) {
-	        alert("위치 정보가 조회되지 않습니다.");
-	    }
-	    navigator.geolocation.getCurrentPosition(success);
-	}
-	
-	function success({coords, timestamp}) {
-        const lat = coords.latitude;
-        const lnt = coords.longitude;
-        location.href = "home.jsp?lat=" + lat + "&lnt=" + lnt + "&wifiSearch=false";
-    }
-    function nearWifiInfo() {
-        const lat = document.getElementById("lat").value;
-        const lnt = document.getElementById("lnt").value;
-        if (lat === "" || lnt === "") {
-            alert("위치정보를 입력하세요");
-            return;
-        }
-        
-        location.href = "home.jsp?lat=" + lat + "&lnt=" + lnt + "&wifiSearch=true";
-    }
     
-</script>
+	<script>
+		function getMyLocation() {
+			if (!navigator.geolocation) {
+		        alert("GPS를 지원하지 않습니다.");
+		    }
+		    navigator.geolocation.getCurrentPosition(position, function(error){
+		    	console.error(error);	
+		    }, {
+		    	enableHighAccuracy: false,
+		        maximumAge: 0,
+		        timeout: Infinity
+		    });
+		}
+		function position(pos) {
+	        var lat = pos.coords.latitude;
+	        var lnt = pos.coords.longitude;
+	        location.href = "home.jsp?lat=" + lat + "&lnt=" + lnt + "&wifiClick=false"; 
+	    }
+	    function getNearWifiInfo() {
+	        const lat = document.getElementById("lat").value;
+	        const lnt = document.getElementById("lnt").value;
+	        if (lat === "" || lnt === "") {
+	            alert("위치정보를 입력하세요");
+	            return;
+	        }
+	        
+	       location.href = "home.jsp?lat=" + lat + "&lnt=" + lnt + "&wifiClick=true"; 
+	    }
+	    
+	</script>
 </body>
 </html>

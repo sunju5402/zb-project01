@@ -5,28 +5,17 @@ import java.sql.*;
 import java.util.*;
 
 public class WifiInfoService {
-//	private static WifiInfoService service = new WifiInfoService();
-//	private Connection conn = null;
-//	private PreparedStatement ps = null;
-//	private ResultSet rs = null;
-//	private ConnectService cs = new ConnectService();
-	
-//	public WifiInfoDao() {
-//		getConnection(conn);
-//	}
-	
-//	public static WifiInfoService getInstance() {
-//		return dao;
-//	}
-//	
-	/* public List<WifiInfo> nearWifiInfo(double x, double y) {
+	private Connection conn = null;
+	private PreparedStatement ps = null;
+	private ResultSet rs = null;
+	private ConnectionService cs = new ConnectionService();
+		
+	 public List<WifiInfo> nearWifiInfo(double x, double y) {
 		WifiInfo wifi = null;
 		List<WifiInfo> list = new ArrayList<>();
 		
 		try {
 			conn = cs.getConnection(conn);
-//			conn = null;
-//			conn = getConnection(conn);
 			
 			String sql = " SELECT *, " 
 					  + " round(6371*acos(cos(radians(?))*cos(radians(LAT))*cos(radians(LNT)-radians(?))+sin(radians(?))*sin(radians(LAT))),4) as DISTANCE " 
@@ -47,7 +36,7 @@ public class WifiInfoService {
 				wifi.setDistance(rs.getDouble("DISTANCE"));
 				wifi.setX_SWIFI_MGR_NO(rs.getString("X_SWIFI_MGR_NO"));
 				wifi.setX_SWIFI_WRDOFC(rs.getString("X_SWIFI_WRDOFC"));
-				wifi.setX_SWIFI_MAIN_NM(rs.getNString("X_SWIFI_MAIN_NM"));
+				wifi.setX_SWIFI_MAIN_NM(rs.getString("X_SWIFI_MAIN_NM"));
 				wifi.setX_SWIFI_ADRES1(rs.getString("X_SWIFI_ADRES1"));
 				wifi.setX_SWIFI_ADRES2(rs.getString("X_SWIFI_ADRES2"));
 				wifi.setX_SWIFI_INSTL_FLOOR(rs.getString("X_SWIFI_INSTL_FLOOR"));
@@ -88,13 +77,9 @@ public class WifiInfoService {
 		}
 		
 		return list;
-	} */
+	}
 	
 	public void saveWifiInfo(WifiInfo wifi) {
-		String dbFileUrl = "jdbc:sqlite:sqlite.db";
-		Connection con = null;
-		PreparedStatement pss = null;
-		
 		try {
 			Class.forName("org.sqlite.JDBC");
 			System.out.println("SQLite DB conneted");
@@ -103,9 +88,6 @@ public class WifiInfoService {
 		}
 		
 		try {
-			con = DriverManager.getConnection(dbFileUrl);
-//			conn = null;
-//			conn.setAutoCommit(false);
 			String sql = " INSERT INTO wifi_info(X_SWIFI_MGR_NO, X_SWIFI_WRDOFC, "
 					+  "X_SWIFI_MAIN_NM, X_SWIFI_ADRES1, X_SWIFI_ADRES2, "
 					+  "X_SWIFI_INSTL_FLOOR, X_SWIFI_INSTL_TY, X_SWIFI_INSTL_MBY, "
@@ -116,30 +98,27 @@ public class WifiInfoService {
 					+  " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?"
 					+  " ) ";
 	
-//			conn = cs.getConnection(conn);
-//			System.out.println("ddfka;jekjd");
-			System.out.println("여긴가");
-			pss = con.prepareStatement(sql);
-			System.out.println("제발...");
-			pss.setString(1, wifi.getX_SWIFI_MGR_NO());
-			pss.setString(2, wifi.getX_SWIFI_WRDOFC());
-			pss.setString(3, wifi.getX_SWIFI_MAIN_NM());
-			pss.setString(4, wifi.getX_SWIFI_ADRES1());
-			pss.setString(5, wifi.getX_SWIFI_ADRES2());
-			pss.setString(6, wifi.getX_SWIFI_INSTL_FLOOR());
-			pss.setString(7, wifi.getX_SWIFI_INSTL_TY());
-			pss.setString(8, wifi.getX_SWIFI_INSTL_MBY());
-			pss.setString(9, wifi.getX_SWIFI_SVC_SE());
-			pss.setString(10, wifi.getX_SWIFI_CMCWR());
-			pss.setString(11, wifi.getX_SWIFI_CNSTC_YEAR());
-			pss.setString(12, wifi.getX_SWIFI_INOUT_DOOR());
-			pss.setString(13, wifi.getX_SWIFI_REMARS3());
-			pss.setDouble(14, wifi.getLNT());
-			pss.setDouble(15, wifi.getLAT());
-			pss.setString(16, wifi.getWORK_DTTM());
+			conn = cs.getConnection(conn);
+
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, wifi.getX_SWIFI_MGR_NO());
+			ps.setString(2, wifi.getX_SWIFI_WRDOFC());
+			ps.setString(3, wifi.getX_SWIFI_MAIN_NM());
+			ps.setString(4, wifi.getX_SWIFI_ADRES1());
+			ps.setString(5, wifi.getX_SWIFI_ADRES2());
+			ps.setString(6, wifi.getX_SWIFI_INSTL_FLOOR());
+			ps.setString(7, wifi.getX_SWIFI_INSTL_TY());
+			ps.setString(8, wifi.getX_SWIFI_INSTL_MBY());
+			ps.setString(9, wifi.getX_SWIFI_SVC_SE());
+			ps.setString(10, wifi.getX_SWIFI_CMCWR());
+			ps.setString(11, wifi.getX_SWIFI_CNSTC_YEAR());
+			ps.setString(12, wifi.getX_SWIFI_INOUT_DOOR());
+			ps.setString(13, wifi.getX_SWIFI_REMARS3());
+			ps.setDouble(14, wifi.getLNT());
+			ps.setDouble(15, wifi.getLAT());
+			ps.setString(16, wifi.getWORK_DTTM());
 			
-			int affected = pss.executeUpdate();
-//			conn.commit();
+			int affected = ps.executeUpdate();
 			
 			if (affected > 0) {
                 System.out.println(" 저장 성공 ");
@@ -147,29 +126,22 @@ public class WifiInfoService {
                 System.out.println(" 저장 실패 ");
             }
 		} catch (Exception e) {
-//			cs.rollback(conn);
 			System.out.println("저장 오류");
 			System.out.println(e.getMessage());
 		} finally {
 			try {
-                if (pss != null && !pss.isClosed()) {
-                    pss.close();
+                if (ps != null && !ps.isClosed()) {
+                	ps.close();
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
 			
-			try {
-                if (con != null && !con.isClosed()) {
-                	con.isClosed();
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-			
-//			cs.closeConnection(conn);
+			cs.closeConnection(conn);
 		}
 	}
+	
+	// wifi 삭제 코드
 /*
 	public void withrawWifiInfo (WifiInfo wifi) {
 		try {

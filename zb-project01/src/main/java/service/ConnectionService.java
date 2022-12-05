@@ -2,9 +2,8 @@ package service;
 
 import java.sql.*;
 
-public class ConnectService {
-//	public Connection conn = null;
-	private String dbFileUrl = "jdbc:sqlite:sqlite.db";
+public class ConnectionService {
+	private String dbFileUrl = "jdbc:sqlite:/Users/sj/git/zb-project01/zb-project01/sqlite.db";
 	
 	public Connection getConnection(Connection conn) {
 		try {
@@ -18,7 +17,6 @@ public class ConnectService {
 			conn = DriverManager.getConnection(dbFileUrl);
 			System.out.println("connection 연결 성공");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
