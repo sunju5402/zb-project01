@@ -1,8 +1,10 @@
+package test;
 import java.sql.*;
 import java.util.*;
 
-public class Main {
+public class Test {
 
+	// test용
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		Connection con = null;
