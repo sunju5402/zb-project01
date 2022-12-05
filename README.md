@@ -19,6 +19,16 @@
                     openapi를 통해 받아온 wifi 총 개수 알아오는 기능
     - WifiInfoService : 와이파이 정보 db에 저장, 와이파이 정보 db에서 가져오기
     - HistoryService : 위치를 이용해 근처 와이파이를 조회한 정보 db에 등록, db에서 정보 가져오기, db에서 정보 삭제하기
+    
+- src/main/webapp
+  - home.jsp
+    - 홈 화면, 와이파이 정보가져오기, 히스토리 목록가기, 내 위치 불러오기, 근처 와이파이 보기
+    - 근처 와이파이 보기를 클릭했을 때, 파라미터로 wifiClick을 보내 ture면 목록 나열, false면 위치 정보 입력 후 조회
+  - load-wifi.jsp
+    - openapi를 통해 와이파이 정보 몇개인지 가져와 화면에 보여주기
+  - history.jsp
+    -  db에 저장된 history 목록 보여주기
+    -  삭제를 누르면 "삭제 성공" 이라는 문구와 함께 히스토리 목록에서 삭제
 
 # 개발환경
  - Java(JDK 11)
