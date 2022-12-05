@@ -8,16 +8,26 @@
  - 근처 와이파이 정보를 보기를 누를 때마다 위치 히스토리 목록에 x좌표, y좌표, 조회일자 등록하기
 
 # 구현
-  
+- src/main/java
+  - dto
+    - History : 위치 히스토리에 저장할 데이터공간(id, 위도, 경도, 조회일자) 
+    - WifiInfo : open api로 불러온 와이파이 정보 저장할 데이터공간
+  - sevice
+    - ConnectionService : 와이파이와 히스토리에 쓰일 db를 연결하기 위한 connection 서비스
+    - HttpService : httpClient 처리를 위해서 okhttp3 이용, 
+                    Json 처리를 위한 gson 이용하여 자동으로 wifiInfo에 데이터 담는 기능,
+                    openapi를 통해 받아온 wifi 총 개수 알아오는 기능
+    - WifiInfoService : 와이파이 정보 db에 저장, 와이파이 정보 db에서 가져오기
+    - HistoryService : 위치를 이용해 근처 와이파이를 조회한 정보 db에 등록, db에서 정보 가져오기, db에서 정보 삭제하기
 
 # 개발환경
-Java(JDK 11)
-Eclipse
-Tomcat v9.0
-gson
-okhttp3
-sqlite-jdbc
-lombok
-HTML
-CSS
-JS
+ - Java(JDK 11)
+ - Eclipse
+ - Tomcat v9.0
+ - gson
+ - okhttp3
+ - sqlite-jdbc
+ - lombok
+ - HTML
+ - CSS
+ - JS
